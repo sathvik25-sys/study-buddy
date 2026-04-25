@@ -3,7 +3,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from embeddings import load_vector_store
 from rag_chain import create_rag_chain, ask_question
 from quiz import generate_quiz
 
@@ -18,9 +17,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load chain once on startup
-vs = load_vector_store()
-chain = create_rag_chain(vs)
+chain = None  # loaded lazily
 
 class QuestionRequest(BaseModel):
     question: str
@@ -34,6 +31,11 @@ def root():
 
 @app.post("/ask")
 def ask(req: QuestionRequest):
+    global chain
+    if chain is None:
+        from embeddings import load_vector_store
+        vs = load_vector_store()
+        chain = create_rag_chain(vs)
     result = ask_question(chain, req.question)
     return result
 
