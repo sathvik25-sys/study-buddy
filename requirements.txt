@@ -3,11 +3,10 @@ langchain
 langchain-core
 langchain-community
 langchain-groq
-langchain-chroma
 langchain-huggingface
 langchain-text-splitters
 langchain-google-genai
-chromadb
+faiss-cpu
 PyMuPDF
 elevenlabs
 duckduckgo-search
