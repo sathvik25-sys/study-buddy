@@ -27,7 +27,21 @@ def get_embeddings():
         model="sentence-transformers/all-MiniLM-L6-v2",
         huggingfacehub_api_token=os.getenv("HF_API_KEY")
     )
-
+@app.on_event("startup")
+async def startup():
+    global chain
+    sample = """
+    StudyBuddy is an AI-powered study assistant built with Groq, LangChain, FAISS and HuggingFace.
+    It helps students learn faster by allowing them to upload PDFs and ask questions.
+    Features include RAG-based Q&A with citations, quiz generation, exam mode, and audio playback.
+    The app uses Groq's LLaMA model for fast inference and HuggingFace for embeddings.
+    Students can upload any PDF document and get instant answers with source citations.
+    """
+    splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+    chunks = splitter.split_text(sample)
+    vs = FAISS.from_texts(texts=chunks, embedding=get_embeddings())
+    chain = create_rag_chain(vs)
+    print("✅ Default context loaded!")
 class QuestionRequest(BaseModel):
     question: str
 
