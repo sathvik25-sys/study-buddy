@@ -1,4 +1,5 @@
 import os
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 from dotenv import load_dotenv
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -35,7 +36,7 @@ def create_vector_store(text):
 
 def load_vector_store():
     embeddings = HuggingFaceEmbeddings(
-        model_name="sentence-transformers/all-MiniLM-L6-v2"
+        model_name="sentence-transformers/all-MiniLM-L2-v2"
     )
     vectorstore = Chroma(
         persist_directory="./chroma_db",
